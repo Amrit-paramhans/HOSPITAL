@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 import doctors from "../../data/doctors";
 
-// ⬅ NEW imports
+// NEW imports
 import { addEntry, getEntries } from "../../data/entriesStore";
 
 function DoctorDetails() {
@@ -14,19 +14,17 @@ function DoctorDetails() {
   const [date, setDate] = useState("2025-01-01");
   const [items, setItems] = useState([{ name: "", nurseQty: "" }]);
 
-  // ➕ Add new empty row in modal
   const addRow = () => {
     setItems([...items, { name: "", nurseQty: "" }]);
   };
 
-  // ✏ Update row in modal
   const updateItem = (index, field, value) => {
     const newItems = [...items];
     newItems[index][field] = value;
     setItems(newItems);
   };
 
-  // 💾 Save entry using entriesStore
+  // SAVE nurse entry 
   const handleSave = () => {
     const validItems = items.filter(
       (i) => i.name.trim() !== "" && i.nurseQty !== ""
@@ -38,6 +36,7 @@ function DoctorDetails() {
     }
 
     const entry = {
+      id: Date.now(), // <-- IMPORTANT FIX
       doctorId,
       doctorName: doctor.name,
       date,
@@ -52,7 +51,7 @@ function DoctorDetails() {
     alert("Entry saved!");
   };
 
-  // 📌 Load all entries for this doctor
+  // Load all entries for doctor
   const allEntries = getEntries().filter((e) => e.doctorId === doctorId);
 
   return (
@@ -77,7 +76,6 @@ function DoctorDetails() {
 
       <h2 style={{ marginTop: 30, fontSize: 22 }}>Entries</h2>
 
-      {/* No entries */}
       {allEntries.length === 0 ? (
         <p>No entries yet.</p>
       ) : (
@@ -99,7 +97,7 @@ function DoctorDetails() {
 
               <tbody>
                 {entry.items.map((nItem) => {
-                  const invQty = 0; // Inventory will come later
+                  const invQty = 0;
                   const diff = invQty - nItem.qty;
 
                   return (
@@ -119,7 +117,7 @@ function DoctorDetails() {
         ))
       )}
 
-      {/* ================= MODAL ================= */}
+      {/* Modal */}
       {showModal && (
         <div
           style={{
@@ -147,7 +145,6 @@ function DoctorDetails() {
               Add Entry for {doctor.name}
             </h3>
 
-            {/* Date selection */}
             <label>Date:</label>
             <select
               value={date}
@@ -157,7 +154,6 @@ function DoctorDetails() {
               <option value="2025-01-01">2025-01-01</option>
             </select>
 
-            {/* Items */}
             <h4>Items:</h4>
             {items.map((item, index) => (
               <div
@@ -226,7 +222,6 @@ function DoctorDetails() {
           </div>
         </div>
       )}
-      {/* =============== END MODAL ================= */}
     </div>
   );
 }
