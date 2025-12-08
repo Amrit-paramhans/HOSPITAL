@@ -1,3 +1,5 @@
+
+
 import DashboardLayout from "../../layouts/DashboardLayout";
 import {
   BarChart,
@@ -17,7 +19,12 @@ import { getInventory } from "../../data/inventoryStore";
 
 function Analytics() {
   const nurseEntries = getEntries();
-  const storeEntries = getInventory();
+  const rawStoreEntries = getInventory();
+
+  // AUTO-FIX: Filter out "ghost" inventory records that don't have a matching nurse entry
+  // This prevents items like "ddd" from showing up if their parent entry was deleted
+  const validEntryIds = new Set(nurseEntries.map(e => e.id));
+  const storeEntries = rawStoreEntries.filter(inv => validEntryIds.has(inv.nurseEntryId));
 
   // Build analytics data
   let analyticsMap = {};

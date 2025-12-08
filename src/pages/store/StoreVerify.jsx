@@ -1,9 +1,8 @@
-// src/pages/store/StoreVerify.jsx
-
 import { useState } from "react";
 import { getEntries } from "../../data/entriesStore";
-import { addInventoryRecord } from "../../data/inventoryStore";   // ✅ NEW
+import { addInventoryRecord } from "../../data/inventoryStore";
 import doctors from "../../data/doctors";
+import { MdSave } from "react-icons/md";
 
 function StoreVerify() {
   const entries = getEntries();
@@ -42,114 +41,118 @@ function StoreVerify() {
       itemsVerified: Object.entries(inventoryInputs[entryId]).map(
         ([name, qty]) => ({
           name,
-          qty: Number(qty),  // Convert to number
+          qty: Number(qty),
         })
       ),
     };
 
-    addInventoryRecord(saveObj); // ✅ Save to localStorage permanently
+    addInventoryRecord(saveObj);
     alert("Inventory saved successfully!");
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Verify Inventory</h1>
+    <div className="p-8 bg-gray-50 min-h-screen w-full">
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">
+        Verify Inventory
+      </h1>
 
       {/* Date + Doctor Selection */}
-      <div style={{ marginTop: "20px" }}>
-        <label>Select Date: </label>
-        <select
-          value={selectedDate}
-          onChange={(e) => setSelectedDate(e.target.value)}
-        >
-          {dates.map((d) => (
-            <option key={d}>{d}</option>
-          ))}
-        </select>
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8 flex flex-wrap gap-6 items-center">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Select Date</label>
+          <select
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#009688] outline-none min-w-[200px]"
+          >
+            {dates.map((d) => (
+              <option key={d}>{d}</option>
+            ))}
+          </select>
+        </div>
 
-        <label style={{ marginLeft: "20px" }}>Select Doctor: </label>
-        <select
-          value={selectedDoctor}
-          onChange={(e) => setSelectedDoctor(e.target.value)}
-        >
-          <option value="">-- Choose --</option>
-
-          {doctors.map((doc) => (
-            <option key={doc.id} value={doc.id}>
-              {doc.name}
-            </option>
-          ))}
-        </select>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Select Doctor</label>
+          <select
+            value={selectedDoctor}
+            onChange={(e) => setSelectedDoctor(e.target.value)}
+            className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#009688] outline-none min-w-[200px]"
+          >
+            <option value="">-- Choose Doctor --</option>
+            {doctors.map((doc) => (
+              <option key={doc.id} value={doc.id}>
+                {doc.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
-
-      <hr style={{ marginTop: "20px" }} />
 
       {/* Entries Panel */}
       {selectedDoctor === "" ? (
-        <p>Select a doctor to continue.</p>
+        <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 text-center text-gray-500">
+          Please select a doctor to verify inventory.
+        </div>
       ) : doctorEntries.length === 0 ? (
-        <p>No nurse entries found for this date.</p>
+        <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 text-center text-gray-500">
+          No nurse entries found for this date.
+        </div>
       ) : (
-        doctorEntries.map((entry) => (
-          <div
-            key={entry.id}
-            style={{
-              marginTop: "20px",
-              padding: "15px",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-            }}
-          >
-            <h3>Entry ID: {entry.id}</h3>
+        <div className="space-y-8">
+          {doctorEntries.map((entry) => (
+            <div key={entry.id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+              <h3 className="text-lg font-bold text-gray-700 mb-4 border-b border-gray-100 pb-2">
+                Entry ID: {entry.id}
+              </h3>
 
-            <table width="100%" border="1" cellPadding="8">
-              <thead>
-                <tr>
-                  <th>Item</th>
-                  <th>Nurse Qty</th>
-                  <th>Inventory Qty</th>
-                </tr>
-              </thead>
+              <div className="overflow-hidden rounded-lg border border-gray-200 mb-4">
+                <table className="w-full border-collapse bg-white text-left text-sm text-gray-500">
+                  <thead className="bg-[#E0F2F1] text-[#00796B]">
+                    <tr>
+                      <th className="px-6 py-4 font-bold">Item</th>
+                      <th className="px-6 py-4 font-bold">Nurse Qty</th>
+                      <th className="px-6 py-4 font-bold">Inventory Qty (Enter)</th>
+                    </tr>
+                  </thead>
 
-              <tbody>
-                {entry.items.map((item) => (
-                  <tr key={item.name}>
-                    <td>{item.name}</td>
-                    <td>{item.qty}</td>
-                    <td>
-                      <input
-                        type="number"
-                        value={inventoryInputs[entry.id]?.[item.name] || ""}
-                        onChange={(e) =>
-                          handleInventoryChange(
-                            entry.id,
-                            item.name,
-                            e.target.value
-                          )
-                        }
-                        style={{ width: "80px" }}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                  <tbody className="divide-y divide-gray-100 border-t border-gray-100">
+                    {entry.items.map((item) => (
+                      <tr key={item.name} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4 font-medium text-gray-900">{item.name}</td>
+                        <td className="px-6 py-4">{item.qty}</td>
+                        <td className="px-6 py-4">
+                          <input
+                            type="number"
+                            placeholder="0"
+                            value={inventoryInputs[entry.id]?.[item.name] || ""}
+                            onChange={(e) =>
+                              handleInventoryChange(
+                                entry.id,
+                                item.name,
+                                e.target.value
+                              )
+                            }
+                            className="border border-gray-300 rounded-lg p-2 w-32 focus:ring-2 focus:ring-[#009688] outline-none"
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
-            <button
-              onClick={() => handleSave(entry.id, entry.items)}
-              style={{
-                marginTop: "12px",
-                padding: "8px 14px",
-                background: "#2563eb",
-                color: "white",
-                border: "none",
-                cursor: "pointer",
-              }}
-            >
-              Save Inventory
-            </button>
-          </div>
-        ))
+              <div className="flex justify-end">
+                <button
+                  onClick={() => handleSave(entry.id, entry.items)}
+                  className="px-6 py-2 bg-[#009688] text-white rounded-lg shadow-md hover:bg-[#00796B] transition-colors font-medium flex items-center gap-2"
+                >
+                  <MdSave size={20} />
+                  Save Inventory
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

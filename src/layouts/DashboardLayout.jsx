@@ -1,24 +1,21 @@
-// src/layouts/DashboardLayout.jsx
 import AdminSidebar from "../components/AdminSidebar";
 
 function DashboardLayout({ children }) {
   return (
-    <div style={{ display: "flex" }}>
-      <div style={{ position: "fixed", left: 0, top: 0 }}>
+    <div className="flex">
+
+      {/* FIXED SIDEBAR */}
+      <div className="fixed left-0 top-0 h-full w-[250px]">
         <AdminSidebar />
       </div>
 
-      <main style={{
-        marginLeft: 250,
-        padding: 32,
-        width: "100%",
-        minHeight: "100vh",
-        background: "var(--bg-main)"
-      }}>
-        <div className="page-wrapper">
-          {children}
-        </div>
-      </main>
+      {/* MAIN CONTENT */}
+      <div
+        className="p-8 w-full min-h-screen bg-gray-50"
+        style={{ marginLeft: "250px" }}   // Sidebar width
+      >
+        {children}
+      </div>
     </div>
   );
 }
