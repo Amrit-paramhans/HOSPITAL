@@ -1,8 +1,18 @@
+import { Link } from "react-router-dom";
 import { MdPeople, MdEvent, MdDescription, MdTrendingUp } from "react-icons/md";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import StatsCard from "../../components/StatsCard";
+import doctors from "../../data/doctors";
+import { getAppointments } from "../../data/appointmentsStore";
+import { getEntries } from "../../data/entriesStore";
+import { getPatients } from "../../data/patientsStore";
 
 function DashboardHome() {
+  const doctorCount = doctors.length;
+  const appointmentCount = getAppointments().length;
+  const reportCount = getEntries().length;
+  const patientCount = getPatients().length;
+
   return (
     <DashboardLayout>
       {/* Header */}
@@ -15,34 +25,42 @@ function DashboardHome() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatsCard
-          icon={MdPeople}
-          value="45"
-          label="Total Doctors"
-          progress={75}
-          trend="2 new"
-        />
-        <StatsCard
-          icon={MdEvent}
-          value="120"
-          label="Appointments"
-          progress={60}
-          trend="12%"
-        />
-        <StatsCard
-          icon={MdDescription}
-          value="8"
-          label="Pending Reports"
-          progress={25}
-          trend="3 left"
-        />
-        <StatsCard
-          icon={MdTrendingUp}
-          value="540"
-          label="Monthly Patients"
-          progress={85}
-          trend="5%"
-        />
+        <Link to="/doctors">
+          <StatsCard
+            icon={MdPeople}
+            value={doctorCount.toString()}
+            label="Total Doctors"
+            progress={75}
+            trend="Active"
+          />
+        </Link>
+        <Link to="/appointments">
+          <StatsCard
+            icon={MdEvent}
+            value={appointmentCount.toString()}
+            label="Appointments"
+            progress={60}
+            trend="Scheduled"
+          />
+        </Link>
+        <Link to="/reports">
+          <StatsCard
+            icon={MdDescription}
+            value={reportCount.toString()}
+            label="Total Reports"
+            progress={25}
+            trend="Entries"
+          />
+        </Link>
+        <Link to="/patients">
+          <StatsCard
+            icon={MdTrendingUp}
+            value={patientCount.toString()}
+            label="Total Patients"
+            progress={85}
+            trend="Registered"
+          />
+        </Link>
       </div>
 
       {/* Welcome Section */}

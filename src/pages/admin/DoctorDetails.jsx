@@ -2,6 +2,8 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 import doctors from "../../data/doctors";
 import { addEntry, getEntries, updateEntry } from "../../data/entriesStore";
+import { getInventory, removeItemFromInventory } from "../../data/inventoryStore";
+import { getPatients } from "../../data/patientsStore";
 import { MdAdd, MdEdit, MdDelete, MdSave, MdCancel } from "react-icons/md";
 
 function DoctorDetails() {
@@ -11,6 +13,8 @@ function DoctorDetails() {
 
   const [showModal, setShowModal] = useState(false);
   const [date, setDate] = useState("2025-01-01");
+  const [selectedPatientId, setSelectedPatientId] = useState("");
+  const [diagnosis, setDiagnosis] = useState("");
   const [items, setItems] = useState([{ name: "", nurseQty: "" }]);
 
   // Editing state
@@ -39,10 +43,16 @@ function DoctorDetails() {
       return;
     }
 
+    const patients = getPatients();
+    const patient = patients.find(p => p.id === Number(selectedPatientId));
+
     const entry = {
       id: Date.now(),
       doctorId,
       doctorName: doctor.name,
+      patientId: patient ? patient.id : null,
+      patientName: patient ? patient.name : null,
+      diagnosis,
       date,
       items: validItems.map((i) => ({
         name: i.name,
@@ -85,11 +95,18 @@ function DoctorDetails() {
   // Delete Item
   const deleteItem = (entry, itemIndex) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
+      const itemToDelete = entry.items[itemIndex];
       const updatedEntry = { ...entry };
       updatedEntry.items.splice(itemIndex, 1);
 
       // If no items left, maybe delete the entry? For now just update.
       updateEntry(updatedEntry);
+
+      // Sync with Inventory: Remove the item from the corresponding inventory record
+      if (itemToDelete) {
+        removeItemFromInventory(entry.id, itemToDelete.name);
+      }
+
       window.location.reload();
     }
   };
@@ -121,9 +138,16 @@ function DoctorDetails() {
         ) : (
           allEntries.map((entry) => (
             <div key={entry.id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <h3 className="text-lg font-bold text-gray-700 mb-4 border-b border-gray-100 pb-2">
-                Date: {entry.date}
-              </h3>
+              <div className="flex justify-between items-center mb-4 border-b border-gray-100 pb-2">
+                <h3 className="text-lg font-bold text-gray-700">
+                  Date: {entry.date}
+                </h3>
+                {entry.patientName && (
+                  <span className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-medium border border-blue-100">
+                    Patient: {entry.patientName}
+                  </span>
+                )}
+              </div>
 
               <div className="overflow-hidden rounded-lg border border-gray-200">
                 <table className="w-full border-collapse bg-white text-left text-sm text-gray-500">
@@ -173,8 +197,8 @@ function DoctorDetails() {
                           <td className="px-6 py-4">
                             <span
                               className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold ${diff === 0
-                                  ? "bg-green-50 text-green-600"
-                                  : "bg-red-50 text-red-600"
+                                ? "bg-green-50 text-green-600"
+                                : "bg-red-50 text-red-600"
                                 }`}
                             >
                               {diff > 0 ? `+${diff}` : diff}
@@ -240,14 +264,41 @@ function DoctorDetails() {
             </h2>
 
             <div className="space-y-4 mb-6">
-              <label className="block text-sm font-medium text-gray-700">Date</label>
-              <select
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-[#009688] outline-none"
-              >
-                <option value="2025-01-01">2025-01-01</option>
-              </select>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                <select
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-[#009688] outline-none"
+                >
+                  <option value="2025-01-01">2025-01-01</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Patient (Optional)</label>
+                <select
+                  value={selectedPatientId}
+                  onChange={(e) => setSelectedPatientId(e.target.value)}
+                  className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-[#009688] outline-none"
+                >
+                  <option value="">-- Select Patient --</option>
+                  {getPatients().map(p => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Diagnosis / Problem</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Fever, Surgery"
+                  value={diagnosis}
+                  onChange={(e) => setDiagnosis(e.target.value)}
+                  className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-[#009688] outline-none"
+                />
+              </div>
             </div>
 
             <h3 className="font-semibold text-gray-700 mb-3">Items</h3>

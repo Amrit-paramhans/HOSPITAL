@@ -21,6 +21,9 @@ export function addEntry(entry) {
     id: Date.now(), // 🔥 FIX 1: Ensure every entry has unique ID
     doctorId: entry.doctorId, // 🔥 FIX 2: include doctorId
     doctorName: entry.doctorName, // 🔥 FIX 3: include doctorName
+    patientId: entry.patientId || null, // NEW: Link to patient
+    patientName: entry.patientName || null, // NEW: Link to patient
+    diagnosis: entry.diagnosis || "", // NEW: Diagnosis
     date: entry.date,
     items: entry.items,
   };

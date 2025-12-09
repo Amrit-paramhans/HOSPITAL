@@ -40,3 +40,19 @@ export function cleanupOrphanedInventory(validEntryIds) {
 
   localStorage.setItem(KEY, JSON.stringify(remaining));
 }
+
+// Remove a specific item from an inventory record
+export function removeItemFromInventory(nurseEntryId, itemName) {
+  const all = getInventory();
+  const index = all.findIndex((i) => i.nurseEntryId === nurseEntryId);
+
+  if (index !== -1) {
+    const record = all[index];
+    // Filter out the item
+    if (record.itemsVerified) {
+      record.itemsVerified = record.itemsVerified.filter((i) => i.name !== itemName);
+      all[index] = record;
+      localStorage.setItem(KEY, JSON.stringify(all));
+    }
+  }
+}

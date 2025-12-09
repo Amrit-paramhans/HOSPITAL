@@ -14,46 +14,11 @@ function Reports() {
 
   const dates = Object.keys(grouped);
 
-  // Export to CSV
-  const downloadCSV = () => {
-    let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Date,Doctor,Item,Nurse Qty,Store Qty,Difference\n";
-
-    dates.forEach(date => {
-      grouped[date].forEach(entry => {
-        const invMatch = inv.find(i => i.nurseEntryId === entry.id);
-        entry.items.forEach(item => {
-          const storeItem = invMatch?.itemsVerified.find(x => x.name === item.name);
-          const invQty = storeItem ? storeItem.qty : 0;
-          const diff = invQty - item.qty;
-
-          csvContent += `${date},${entry.doctorName},${item.name},${item.qty},${invQty},${diff}\n`;
-        });
-      });
-    });
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "hospital_reports.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   return (
     <div className="p-8 bg-gray-50 min-h-screen w-full">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">
-          Detailed Reports
-        </h1>
-        <button
-          onClick={downloadCSV}
-          className="bg-[#009688] hover:bg-[#00796B] text-white font-bold py-2 px-4 rounded-lg shadow-md transition-colors flex items-center gap-2"
-        >
-          <span>Download CSV</span>
-        </button>
-      </div>
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">
+        Detailed Reports
+      </h1>
 
       {dates.map((date) => (
         <div key={date} className="mb-12">
@@ -106,8 +71,8 @@ function Reports() {
                               <td className="px-6 py-4">
                                 <span
                                   className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold ${diff === 0
-                                    ? "bg-green-50 text-green-600"
-                                    : "bg-red-50 text-red-600"
+                                      ? "bg-green-50 text-green-600"
+                                      : "bg-red-50 text-red-600"
                                     }`}
                                 >
                                   {diff > 0 ? `+${diff}` : diff}

@@ -11,16 +11,6 @@ import DoctorDetails from "./pages/admin/DoctorDetails";
 import Compare from "./pages/admin/compare";
 import Reports from "./pages/admin/Reports";
 import Analytics from "./pages/admin/Analytics";
-import Patients from "./pages/admin/Patients";
-import PatientDetails from "./pages/admin/PatientDetails";
-import Appointments from "./pages/admin/Appointments";
-import DashboardPerformance from "./pages/admin/DashboardPerformance";
-
-
-// ... existing imports
-
-// ... inside App component routes
-
 
 // STORE PAGES
 import StoreLayout from "./layouts/StoreLayout";
@@ -93,46 +83,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
-          {/* PATIENTS ROUTES */}
-          <Route
-            path="/patients"
-            element={
-              <ProtectedRoute role="admin">
-                <Patients />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/patient/:id"
-            element={
-              <ProtectedRoute role="admin">
-                <PatientDetails />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* APPOINTMENTS ROUTE */}
-          <Route
-            path="/appointments"
-            element={
-              <ProtectedRoute role="admin">
-                <Appointments />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* PERFORMANCE ROUTE */}
-          <Route
-            path="/performance"
-            element={
-              <ProtectedRoute role="admin">
-                <DashboardPerformance />
-              </ProtectedRoute>
-            }
-          />
-
-
 
           {/* STORE ROUTES */}
           <Route

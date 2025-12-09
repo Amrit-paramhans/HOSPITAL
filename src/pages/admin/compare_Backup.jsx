@@ -34,52 +34,11 @@ function Compare() {
     ).values(),
   ];
 
-  // Export to CSV
-  const downloadCSV = () => {
-    if (!selectedDate) return;
-
-    let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Date,Doctor,Item,Nurse Qty,Store Qty,Difference\n";
-
-    doctors.forEach(doc => {
-      const nurseEntries = allEntries.filter(
-        (e) => e.doctorId === doc.doctorId && e.date === selectedDate
-      );
-
-      nurseEntries.forEach(entry => {
-        const inv = invAll.find((i) => i.nurseEntryId === entry.id);
-        entry.items.forEach(item => {
-          const invMatch = inv?.itemsVerified.find((i) => i.name === item.name);
-          const storeQty = invMatch ? invMatch.qty : 0;
-          const diff = storeQty - item.qty;
-
-          csvContent += `${selectedDate},${doc.doctorName},${item.name},${item.qty},${storeQty},${diff}\n`;
-        });
-      });
-    });
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `comparison_${selectedDate}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   return (
     <div className="p-8 bg-gray-50 min-h-screen w-full">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">
-          Compare All Doctors
-        </h1>
-        <button
-          onClick={downloadCSV}
-          className="bg-[#009688] hover:bg-[#00796B] text-white font-bold py-2 px-4 rounded-lg shadow-md transition-colors flex items-center gap-2"
-        >
-          <span>Download CSV</span>
-        </button>
-      </div>
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">
+        Compare All Doctors
+      </h1>
 
       {/* DATE SELECT */}
       <div className="mb-8 bg-white p-4 rounded-xl shadow-sm border border-gray-100 inline-block">
@@ -162,8 +121,8 @@ function Compare() {
                                   <td className="px-6 py-4">
                                     <span
                                       className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold ${diff === 0
-                                        ? "bg-green-50 text-green-600"
-                                        : "bg-red-50 text-red-600"
+                                          ? "bg-green-50 text-green-600"
+                                          : "bg-red-50 text-red-600"
                                         }`}
                                     >
                                       {diff > 0 ? `+${diff}` : diff}

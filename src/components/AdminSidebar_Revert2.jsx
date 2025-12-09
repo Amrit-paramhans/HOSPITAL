@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { MdDashboard, MdPeople, MdCompareArrows, MdAssessment, MdAnalytics, MdLogout, MdMedicalServices, MdEvent, MdInsights } from "react-icons/md";
+import { MdDashboard, MdPeople, MdCompareArrows, MdAssessment, MdAnalytics, MdLogout } from "react-icons/md";
 
 function AdminSidebar() {
   const location = useLocation();
@@ -40,21 +40,6 @@ function AdminSidebar() {
         <Link to="/reports" className={linkClasses("/reports")}>
           <MdAssessment size={20} />
           <span>Reports</span>
-        </Link>
-
-        <Link to="/patients" className={linkClasses("/patients")}>
-          <MdMedicalServices size={20} />
-          <span>Patients</span>
-        </Link>
-
-        <Link to="/appointments" className={linkClasses("/appointments")}>
-          <MdEvent size={20} />
-          <span>Appointments</span>
-        </Link>
-
-        <Link to="/performance" className={linkClasses("/performance")}>
-          <MdInsights size={20} />
-          <span>Performance</span>
         </Link>
 
         <Link to="/analytics" className={linkClasses("/analytics")}>
